@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/styles.css">
+
+     <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="/static/js/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <title>AWS Reckognition - Sandeep Pokhrel</title>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo-border">
+        <img src="/static/images/logo.png" class="logo" alt="">
+      </div>
+      <span class="navbar-brand mb-0 h1 text-white">AWS Reckognition - Lab 3 Assignment</span>
+      <span class="text-white">Submitted by Sandeep Pokhrel</span>
+    </nav>
+
+    <div class="container-fluid mt-2 text-white">
+      <div class="row">
+        <div class="col-md-4">
+          <form enctype=multipart/form-data method="POST">
+            <div class="form-group">
+              <label for="file" class="display-4">Choose Image</label>
+              <input type="file" name="file" class="form-control-file mt-5" id="file">
+              <button id="detect" class="btn btn-success btn-lg mt-5 text-white">Detect</button>
+            </div>
+          </form>
+        </div>
+        <div class="col-md-4">
+          <p class="display-4">Output Image</p>
+          <img src="/static/images/placeholder.png" id="result" alt="...">
+          <div class="loader" id="loader" style="display: none;"></div>
+        </div>
+        <div class="col-md-4">
+          <p class="display-4">Result</p>
+          <div class="resultText text-dark">
+            <ul class="list-group">
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                Gender
+                <span class="badge badge-primary badge-pill" id="gender"></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                Age Range
+                <span class="badge badge-primary badge-pill" id="age"></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                Beard
+                <span class="badge badge-primary badge-pill" id="beard"></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                Smile
+                <span class="badge badge-primary badge-pill" id="smile"></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+               Sunglasses
+                <span class="badge badge-primary badge-pill" id="sunglass"></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                Mustache
+                 <span class="badge badge-primary badge-pill" id="mustache"></span>
+               </li>
+               <li class="list-group-item d-flex justify-content-between align-items-center">
+                Eyes Open
+                 <span class="badge badge-primary badge-pill" id="eyesopen"></span>
+               </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <script>
+
+
+        $("#detect").click(function(event){
+
+            event.preventDefault()
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('loader').style.display = 'block'
+            var fd = new FormData();
+            fd.append('file', $('#file')[0].files[0]);
+            $.ajax({
+                url: 'detect',
+                type: 'POST',
+                data: fd,
+                contentType: false,
+                processData: false,
+                cache: false,
+                success: function (response){
+                    if(response != 0){
+                      document.getElementById('result').src = '/static/images/' + response[1];
+                      document.getElementById('loader').style.display = 'none'
+                      document.getElementById('result').style.display = 'block';
+                      const ans = response[0][0]
+                    
+                      document.getElementById("gender").textContent = ans['Gender']['Value']
+                      document.getElementById("age").textContent = ans['AgeRange']['High'] +" -> "+ ans['AgeRange']['Low']
+                      document.getElementById("beard").textContent = ans['Beard']['Value']
+                      document.getElementById("smile").textContent = ans['Smile']['Value']
+                      document.getElementById("sunglass").textContent = ans['Sunglasses']['Value']
+                      document.getElementById("mustache").textContent = ans['Mustache']['Value']
+                      document.getElementById("eyesopen").textContent = ans['EyesOpen']['Value']
+                    }else{
+                        alert('file not uploaded');
+                    }
+                },
+            });
+        });
+    </script>
+  </body>
+</html>
