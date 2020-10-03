@@ -14,15 +14,9 @@ app = Flask(__name__)
 
 CORS(app)
 
-UPLOAD_FOLDER = 'C:/Users/SANDEEP/Documents/Python/lab3assignment_reckognition/static/images'
+UPLOAD_FOLDER = '/'
 
-client = boto3.client(
-    'rekognition', 
-    aws_session_token="FwoGZXIvYXdzEHsaDLWK4/O2HZ+N47fh4yLaAapdUU4emyDo65ZQG0x4ooIYxLn1ull5ONqZrvFT/swMrolBOufkM3F+WWXRqIlbjoP8+9RKXlAVvMm2tuyBX5DxmzrSeMHdZXNTnKyGUAvPURcAzujBeM7nNCr3yzzmg2FTpR6JtqXqBnGYytSMazpD38AI42vW6zPknNO15puSloK/HZRe4I8APixGGxcprU1vbFI2dt1JuhELWKKc0WJacgrfpaVWyQ/C8sIjjc49Am5fZM9PVPR2GFkiVs3FbGk8uG0go/8K47yWLRxUnGI8K73/PayAQ7GaKI673fsFMi3Otf1Rd7rWDLmt7fG+kocnba6jusS2GRVW4sk6zvr/5Yhegyvn1qUVfejakjQ=", 
-    aws_secret_access_key="JFrFNXj+XrvZWpefw+pxfyI2gzytn8DQh0W1AORL", 
-    aws_access_key_id="ASIASUKMNHTBAI6PBWPJ", 
-    region_name='us-east-1'
-)
+client = boto3.client('rekognition')
 
 @app.route('/', methods=['GET'])
 def index():
@@ -31,9 +25,9 @@ def index():
 @app.route('/detect', methods=['POST'])
 def detect():
     image = request.files.get('file')
-    image.save('image.png')
+    image.save('static/images/image.png')
 
-    file = Image.open(open("image.png",'rb'))
+    file = Image.open(open("static/images/image.png",'rb'))
     stream = io.BytesIO()
     file.save(stream, format=file.format)
     image_binary = stream.getvalue()
@@ -69,7 +63,7 @@ def detect():
         
     IMG_TAIL = random.randint(0, 1000000000)
     file.save(os.path.join(UPLOAD_FOLDER, str(IMG_TAIL) + 'result.png'))
-    return jsonify(response['FaceDetails'], str(IMG_TAIL) + 'result.png')
+    return jsonify(response['FaceDetails'], 'image.png')
 
 
 @app.after_request

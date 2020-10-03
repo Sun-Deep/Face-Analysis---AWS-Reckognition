@@ -81,8 +81,7 @@
 
 
     <script>
-
-
+      $( document ).ready(function() {
         $("#detect").click(function(event){
 
             event.preventDefault()
@@ -99,24 +98,34 @@
                 cache: false,
                 success: function (response){
                     if(response != 0){
-                      document.getElementById('result').src = '/static/images/' + response[1];
+                      // $('#result').html(data.matchstatus);
+                      // $('#result').prop('src', '/static/images/' + response[1]);
+                      var imageLoc= '/static/images/' + response[1];
                       document.getElementById('loader').style.display = 'none'
                       document.getElementById('result').style.display = 'block';
+                      d = new Date();
+                      $('#result').attr('src',imageLoc+"?"+d.getTime());
                       const ans = response[0][0]
-                    
                       document.getElementById("gender").textContent = ans['Gender']['Value']
-                      document.getElementById("age").textContent = ans['AgeRange']['High'] +" -> "+ ans['AgeRange']['Low']
+                      document.getElementById("age").textContent = ans['AgeRange']['Low'] +" - "+ ans['AgeRange']['High']
                       document.getElementById("beard").textContent = ans['Beard']['Value']
                       document.getElementById("smile").textContent = ans['Smile']['Value']
                       document.getElementById("sunglass").textContent = ans['Sunglasses']['Value']
                       document.getElementById("mustache").textContent = ans['Mustache']['Value']
                       document.getElementById("eyesopen").textContent = ans['EyesOpen']['Value']
+                      // d = new Date();
+                      // $('#result').attr('src',imageLoc+"?"+d.getTime());
                     }else{
                         alert('file not uploaded');
                     }
                 },
+                complete: function () {
+                  // Schedule the next request when the current one has been completed
+                    setTimeout(ajaxInterval, 4000);
+                }
             });
         });
+      });
     </script>
   </body>
 </html>
