@@ -8,13 +8,12 @@ import io
 import random
 
 
-
 app = Flask(__name__)
 
 
 CORS(app)
 
-UPLOAD_FOLDER = '/'
+UPLOAD_FOLDER = '/static/images/'
 
 client = boto3.client('rekognition')
 
@@ -62,7 +61,7 @@ def detect():
         draw.line(points, fill='#00d400', width=4)
         
     IMG_TAIL = random.randint(0, 1000000000)
-    file.save(os.path.join(UPLOAD_FOLDER, str(IMG_TAIL) + 'result.png'))
+    file.save(os.path.join(UPLOAD_FOLDER, 'image.png'))
     return jsonify(response['FaceDetails'], 'image.png')
 
 
